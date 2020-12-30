@@ -54,6 +54,6 @@ async def sandwich(ctx, flourGrams=500):
 	if msg != "Success":
 		await ctx.send("Error. Contact Bot maintainer.")
 	await ctx.send(file=discord.File(filename))
-
+	os.remove(filename)	
 
 bot.run(TOKEN)
