@@ -1,0 +1,74 @@
+<head>
+	<title>Random Bread</title>
+	<style>
+		td {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<h2>Random Bread ({{r.totalFlourGrams}}g)</h2>
+	<h3>[{{r.datetime}}]</h3>
+	<hr>
+
+	<h4>Specifications</h4>
+	<ul>
+		{% if r.isBicolorRoll %}
+		<li>Bicolor Roll</li>
+		{% endif %}
+		<li>Flour Style: {{r.flourStyle}}</li>
+		<li>Preferment: {{r.preferment}}</li>
+	</ul>
+
+	<h4>Flour</h4>
+	<ul>
+		<li>Bread Flour - {{r.breadFlourGrams}}g - {{r.breadFlourPercent}}%</li>
+		{% if r.whiteFlourPercent != 0 %}
+		<li>White Flour - {{r.whiteFlourGrams}}g - {{r.whiteFlourPercent}}%</li>
+		{% endif %}
+		{% if r.specialFlourPercent != 0 %}
+		<li>{{r.specialFlour}} - {{r.specialFlourGrams}}g - {{r.specialFlourPercent}}%</li>
+		{% endif %}
+	</ul>
+
+	<h4>Basic Ingredients</h4>
+	<ul>
+	{% if r.sugarPercent != 0 %}
+		<li>{{r.sugar}} - {{r.sugarGrams}}g - {{r.sugarPercent}}%</li>
+	{% endif %}	
+		<li>{{r.salt}} - {{r.saltGrams}}g - {{r.saltPercent}}%</li>
+		<li>{{r.yeast}} - {{r.yeastGrams}}g - {{r.yeastPercent}}%</li>
+	</ul>
+
+	<h4>Spices/Flavoring</h4>
+	<ul>
+	{% if r.spices == [] %}
+		<li>None</li>
+	{% endif %}
+	{% for spice in r.spices %}
+		<li>{{spice}} - {{r.spicesAmt[loop.index-1]}}</li>
+	{% endfor %}
+	{% for extract in r.extracts %}
+		<li>{{extract}} - {{r.extractsAmt[loop.index-1]}}</li>
+	{% endfor %}	
+		<li>{{r.tea}} - {{r.teaAmt}}</li>
+	</ul>
+
+	<h4>Enrichments</h4>
+	<ul>
+		<li>{{r.enrichment}} - {{r.enrichmentGrams}}g - {{r.enrichmentPercent}}%</li>
+	</ul>
+	
+	<h4>Liquids</h4>
+	<ul>
+		{% if r.waterGrams > 0 %}
+		<li>Water - {{r.waterGrams}}g - {{r.waterPercent}}%</li>
+		{% endif %}
+		<li>{{r.liquid}} - {{r.liquidGrams}}g - {{r.liquidPercent}}%</li>
+		{% for fruitPuree in r.fruitPurees %}
+		<li>{{fruitPuree}} Puree - {{r.fruitPureesGrams[loop.index-1]}}g - {{r.fruitPureesPercent[loop.index-1]}}%</li>		
+		{% endfor %}
+	</ul>
+		
+	<hr>
+</body>
