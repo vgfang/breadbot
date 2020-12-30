@@ -150,21 +150,12 @@ def get_fruit_purees_percent(fruitPurees) -> [float]:
 def to_g(flourMl, percent) -> int:
 	return round(flourMl * percent/100)
 
-# returns true if valid flour amount
-def valid_flour_amount(flourAmt: str) -> int:
-	if flourAmt == None:
-		return False
-	elif not str(flourAmt).isnumeric():
-		return False
-	return True
-
-
-def sandwich(ctx, arg):
+# takes filename and writes an html recipe file
+def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	# ALL NUMBERICAL VALUES REPRESENT PERCENTAGES
 	r = Recipe()
-	r.totalFlourGrams = 500 # grams
-	if valid_flour_amount(arg):
-		r.totalFlourGrams = arg
+	r.breadname = breadname
+	r.totalFlourGrams = flourGramInput
 	totalLiquidPercent = 63
 	teaList = ['Lavender', 'Hojicha', 'Matcha', 'Earl Grey', 'Oolong', 'Instant Coffee'] #, 'Cocoa Powder'
 
@@ -244,7 +235,7 @@ def sandwich(ctx, arg):
 
 	# WRITE FORMAT
 	time = datetime.now()
-	r.datetime = f"{time.month}/{time.day}/{time.year} - {time.hour}:{time.minute}:{time.second}"
+	r.datetime = time.strftime('%A, %b %d %Y')
 	templateFile = open("./template.html")
 	templateString = templateFile.read()
 
@@ -258,31 +249,30 @@ def sandwich(ctx, arg):
 	r.spicesAmt = list(map(get_flavor_amount, r.spices))
 	r.extractsAmt = list(map(get_flavor_amount, r.extracts))
 	r.teaAmt = get_flavor_amount(r.tea)
-	# print(r.spices)
-	# print(r.spicesAmt)
 	r.enrichmentGrams = to_g(r.totalFlourGrams, r.enrichmentPercent)
 	r.waterGrams = to_g(r.totalFlourGrams, r.waterPercent)
 	r.liquidGrams = to_g(r.totalFlourGrams, r.liquidPercent)
 	r.fruitPureesGrams = list(map(lambda x: to_g(r.totalFlourGrams,x), r.fruitPureesPercent))
-	print(r.fruitPurees)
 
 	template = Template(templateString)
 	htmlString = template.render(r = r)
-	outfile = open("out.html", 'w')
+	outfile = open(f'{filename}', 'w')
 	outfile.write(htmlString)
 	outfile.close()
 	templateFile.close()
 
+	return "Success"
 
 '''
 TODO
-- bot integration
 - cocoa powder
 - tablespoon conversions
 - preferment (poolish value change)
 - unit conversions?
+- mechanism to delete old stuff
 
 TESTS 
+- bot integration
 - cow milk
 - writing to file/printing
 - liquid, cream cheese, fruit puree

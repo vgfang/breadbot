@@ -1,4 +1,4 @@
-from main import *
+from bread import *
 import unittest
 
 class TestBotMethods(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestBotMethods(unittest.TestCase):
 		self.assertTrue(sum(get_fruit_purees_percent(['Banana','Apple']))<=50)
 		self.assertTrue(sum(get_fruit_purees_percent(['Banana','Apple']))>=25)
 	def test_sandwich(self):
-		self.assertTrue(sandwich(None, 10000) == None)
+		self.assertTrue(generate_recipe("Random Bread", "./testing/test.html", 600) == "Success")
 
 if __name__ == '__main__':
 	unittest.main()
