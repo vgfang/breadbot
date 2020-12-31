@@ -1,5 +1,6 @@
-from bread import *
 import unittest
+from bread import *
+from fractions import Fraction
 
 class TestBotMethods(unittest.TestCase):
 	def test_is_nut(self):
@@ -7,10 +8,16 @@ class TestBotMethods(unittest.TestCase):
 		self.assertTrue(is_nut('Hazelnut'))
 		self.assertFalse(is_nut(''))
 	def test_get_flavor_amount(self):
-		self.assertTrue(get_flavor_amount('Lavender') == '3 tbsp')
-		self.assertTrue(get_flavor_amount('Nutmeg') in ['1/2 tsp', '1/4 tsp'])
-		self.assertFalse(get_flavor_amount('Vanilla') == '3 tbsp')
-		self.assertTrue(get_flavor_amount('') == "get_flavor_amount wrong input")
+		self.assertTrue(get_flavor_amount('Lavender', 500) == '3 tbsp')
+		self.assertTrue(get_flavor_amount('Nutmeg', 500) in ['1/2 tsp', '1/4 tsp'])
+		self.assertFalse(get_flavor_amount('Vanilla', 500) == '3 tbsp')
+		self.assertTrue(get_flavor_amount('', 500) == "get_flavor_amount wrong input")
+	def test_spoon_mult(self):
+		self.assertTrue(spoon_mult(Fraction(1/2), 1) == "1/2 tsp")
+		self.assertTrue(spoon_mult(Fraction(1/2), 2) == "1 tsp")
+		self.assertTrue(spoon_mult(Fraction(1/2), 3) == "1 1/2 tsp")
+		self.assertTrue(spoon_mult(Fraction(1/2), 6) == "1 tbsp")
+		self.assertTrue(spoon_mult(Fraction(1/2), 21) == "3 1/2 tbsp")
 	def test_get_spices(self):
 		self.assertTrue(len(get_spices(3)) == 3)
 		self.assertTrue(get_spices(1) in [['Cinnamon'], ['Cardamom']])
@@ -32,7 +39,7 @@ class TestBotMethods(unittest.TestCase):
 		self.assertTrue(sum(get_fruit_purees_percent(['Banana','Apple']))<=50)
 		self.assertTrue(sum(get_fruit_purees_percent(['Banana','Apple']))>=25)
 	def test_sandwich(self):
-		self.assertTrue(generate_recipe("Random Bread", "./testing/test.html", 600) == "Success")
+		self.assertTrue(generate_recipe("Random Bread", "./testing/test.html", 1200) == "Success")
 
 if __name__ == '__main__':
 	unittest.main()

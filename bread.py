@@ -1,5 +1,6 @@
 import random
-import uuid
+import math
+from fractions import Fraction
 from datetime import datetime
 from jinja2 import Template
 
@@ -23,22 +24,51 @@ def get_special_flour_percent(flourType: str, breadFlourPercent:int) -> int:
 		percentages = list(filter(lambda x: 100-breadFlourPercent >= x, percentages))
 		return random.choice(percentages)
 
+# returns multiplied spoon units from teaspoon fraction input, 3 tsp = 1 tbsp
+def spoon_mult(tsp: Fraction(), multiplier: float) -> str:
+	tsp *= Fraction(multiplier)
+	spoonString = ""
+	if tsp >= 3: # use tablespoons
+		tablespoons = int(tsp // 3)
+		remainder = (tsp % 3) / 3
+		if tablespoons != 0:
+			spoonString += f"{tablespoons} "
+		if remainder.numerator != 0:
+			spoonString += f"{remainder.numerator}/{remainder.denominator} "
+		return f"{spoonString}tbsp"
+	else:
+		teaspoons = int(tsp // 1)
+		remainder = tsp % 1
+		if teaspoons != 0:
+			spoonString += f"{teaspoons} "
+		if remainder.numerator != 0:
+			spoonString += f"{remainder.numerator}/{remainder.denominator} "
+		return f"{spoonString}tsp"
+
 # *DOES NOT ACCOUNT FOR COCOA POWDER*
 # returns amount given the type of flavoring(spices) 
-def get_flavor_amount(flavor: str) -> str:
+def get_flavor_amount(flavor: str, flourAmount: int) -> str:
 	colorsDict = {}
+	scale = 2 # floors to the 500g/scale for clean fractional multiplication
+	multiplier = math.floor(flourAmount/500*scale) / scale 
 	# flavors in category
 	red = ('Cardamom', 'Nutmeg','Hazelnut','Almond','Lemon Extract','Peppermint')
 	blue = ('Cinnamon', 'Allspice')
 	green = ('Vanilla', 'Instant Coffee')
 	purple = ('Orange Zest', 'Lime Zest', 'Lemon Zest', 'Ginger')
 	orange = ('Lavender', 'Hojicha', 'Matcha', 'Earl Grey', 'Oolong')
+	# default possible teaspoon values list for flour = 500, 3 tsp = 1 tbsp
+	redAmt = list(map(Fraction, [1/4, 1/2]))
+	blueAmt = list(map(Fraction, [1/4, 1/2, 1]))
+	greenAmt = list(map(Fraction, [1/2, 1, 3/2]))
+	purpleAmt = list(map(Fraction, [2, 3, 9/2]))
+	orangeAmt = list(map(Fraction, [9]))
 	# random tablespoons
-	colorsDict[red] = ['1/2 tsp', '1/4 tsp']
-	colorsDict[blue] = ['1/4 tsp', '1/2 tsp', '1 tsp']
-	colorsDict[green] = ['1/2 tsp', '1 tsp', '1 1/2 tsp']
-	colorsDict[purple] = ['2 tsp', '1 tbsp', '1 1/2 tbsp']
-	colorsDict[orange] = ['3 tbsp']
+	colorsDict[red] = list(map(lambda x: spoon_mult(x, multiplier), redAmt))
+	colorsDict[blue] = list(map(lambda x: spoon_mult(x, multiplier), blueAmt))
+	colorsDict[green] = list(map(lambda x: spoon_mult(x, multiplier), greenAmt))
+	colorsDict[purple] = list(map(lambda x: spoon_mult(x, multiplier), purpleAmt))
+	colorsDict[orange] = list(map(lambda x: spoon_mult(x, multiplier), orangeAmt))
 
 	for color in colorsDict.keys():
 		if flavor in color:
@@ -246,9 +276,9 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	r.sugarGrams = to_g(r.totalFlourGrams, r.sugarPercent)
 	r.saltGrams = to_g(r.totalFlourGrams, r.saltPercent)
 	r.yeastGrams = to_g(r.totalFlourGrams, r.yeastPercent)
-	r.spicesAmt = list(map(get_flavor_amount, r.spices))
-	r.extractsAmt = list(map(get_flavor_amount, r.extracts))
-	r.teaAmt = get_flavor_amount(r.tea)
+	r.spicesAmt = list(map(lambda x: get_flavor_amount(x, r.totalFlourGrams), r.spices))
+	r.extractsAmt = list(map(lambda x: get_flavor_amount(x, r.totalFlourGrams), r.extracts))
+	r.teaAmt = get_flavor_amount(r.tea, r.totalFlourGrams)
 	r.enrichmentGrams = to_g(r.totalFlourGrams, r.enrichmentPercent)
 	r.waterGrams = to_g(r.totalFlourGrams, r.waterPercent)
 	r.liquidGrams = to_g(r.totalFlourGrams, r.liquidPercent)
@@ -266,17 +296,17 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 '''
 TODO
 - cocoa powder
-- tablespoon conversions
 - preferment (poolish value change)
 - unit conversions?
 - mechanism to delete old stuff
 
 TESTS 
+- tablespoon conversions
 - bot integration
-- cow milk
-- writing to file/printing
-- liquid, cream cheese, fruit puree
 
 DONE
+- writing to file
+- cow milk
+- liquid, cream cheese, fruit puree
 - zest/extract check
 '''
