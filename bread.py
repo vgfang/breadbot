@@ -45,12 +45,11 @@ def spoon_mult(tsp: Fraction(), multiplier: float) -> str:
 			spoonString += f"{remainder.numerator}/{remainder.denominator} "
 		return f"{spoonString}tsp"
 
-# *DOES NOT ACCOUNT FOR COCOA POWDER*
 # returns amount given the type of flavoring(spices) 
 def get_flavor_amount(flavor: str, flourAmount: int) -> str:
 	colorsDict = {}
-	scale = 2 # floors to the 500g/scale for clean fractional multiplication
-	multiplier = math.floor(flourAmount/500*scale) / scale 
+	scale = 4 # floors to the 500g/scale for clean fractional multiplication
+	multiplier = math.floor(flourAmount/500*scale) / scale
 	# flavors in category
 	red = ('Cardamom', 'Nutmeg','Hazelnut','Almond','Lemon Extract','Peppermint')
 	blue = ('Cinnamon', 'Allspice')
@@ -186,13 +185,12 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	r = Recipe()
 	r.breadname = breadname
 	r.totalFlourGrams = flourGramInput
-	totalLiquidPercent = 63
-	teaList = ['Lavender', 'Hojicha', 'Matcha', 'Earl Grey', 'Oolong', 'Instant Coffee'] #, 'Cocoa Powder'
+	r.totalLiquidPercent = 63
 
 	r.preferment = random.choice(['Poolish', 'None'])
 	r.breadFlourPercent = random.choice([75, 50])
 	# FLOUR STYLE 
-	r.flourStyle = random.choice(['Pullman', 'Regular'])
+	r.breadShape = random.choice(['Pullman', 'Regular'])
 	# FLOUR TYPES
 	r.specialFlour = random.choice([
 		'Einkorn',
@@ -213,6 +211,7 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	r.spices = get_spices(spicesNum)
 	extractsNum = random.randint(0,3)
 	r.extracts = get_extracts(extractsNum)
+	teaList = ['Lavender', 'Hojicha', 'Matcha', 'Earl Grey', 'Oolong', 'Instant Coffee']
 	r.tea = random.choice(teaList)
 	# illegal with fruit purees and all extracts but ginger, almond, and hazelnut
 
@@ -231,12 +230,12 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	r.enrichment = random.choice(enrichmentList)
 	r.enrichmentPercent = get_enrichment_percent(r.enrichment)
 	if r.enrichment == 'Cream Cheese':
-		totalLiquidPercent -= 5
+		r.totalLiquidPercent -= 5
 		
 	# LIQUIDS
 	# cap total liquid at 60% when these sugars are used
 	if r.sugar in ['Honey', 'Molasses']:
-		totalLiquidPercent = 60
+		r.totalLiquidPercent = 60
 	# cow milk only if there is no preferemnt
 	viableLiquids = ['Heavy Cream', 'Coconut Milk', 'Cow Milk']
 	if r.preferment != 'None':
@@ -255,13 +254,22 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 			r.fruitPureesPercent = get_fruit_purees_percent(r.fruitPurees)
 
 	# account for cow milk
-	r.liquidPercent = min(r.liquidPercent, totalLiquidPercent - sum(r.fruitPureesPercent))
-	r.waterPercent = max(0, totalLiquidPercent - sum(r.fruitPureesPercent) - r.liquidPercent)
+	r.liquidPercent = min(r.liquidPercent, r.totalLiquidPercent - sum(r.fruitPureesPercent))
+	r.waterPercent = max(0, r.totalLiquidPercent - sum(r.fruitPureesPercent) - r.liquidPercent)
 
 	# BICOLOR ROLL
 	r.isBicolorRoll = False
 	if len(r.fruitPureesPercent) > 0 or r.tea in ['Lavender', 'Hojicha', 'Matcha', 'Earl Grey', 'Oolong']:
 		r.isBicolorRoll = random.choice([True,False])
+
+	# COCOA POWDER
+	r.cocoaPowderPercent = 0
+	cocoaPowderAllowedExtracts = ['Ginger', 'Almond', 'Hazelnut']
+	if r.fruitPurees == [] and any(not x in cocoaPowderAllowedExtracts for x in r.extracts): # allowed
+		if random.randint(0,2) == 0:
+			r.tea = '' # removes tea
+			r.cocoaPowderPercent = round(random.choice([5,10])/100 * r.whiteFlourPercent,1)
+			r.whiteFlourPercent = round(r.whiteFlourPercent - r.cocoaPowderPercent,1)
 
 	# WRITE FORMAT
 	time = datetime.now()
@@ -270,6 +278,7 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	templateString = templateFile.read()
 
 	## Conversion to ml for percentages
+	r.totalLiquidGrams = to_g(r.totalFlourGrams, r.totalLiquidPercent)
 	r.breadFlourGrams = to_g(r.totalFlourGrams, r.breadFlourPercent)
 	r.specialFlourGrams = to_g(r.totalFlourGrams, r.specialFlourPercent)
 	r.whiteFlourGrams = to_g(r.totalFlourGrams, r.whiteFlourPercent)
@@ -283,6 +292,20 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	r.waterGrams = to_g(r.totalFlourGrams, r.waterPercent)
 	r.liquidGrams = to_g(r.totalFlourGrams, r.liquidPercent)
 	r.fruitPureesGrams = list(map(lambda x: to_g(r.totalFlourGrams,x), r.fruitPureesPercent))
+	r.cocoaPowderGrams = round(r.cocoaPowderPercent/100 * r.totalFlourGrams)
+
+	'''
+	## Preferment Changes
+	if r.preferment == 'Poolish':
+		r.breadFlourGrams //= 2
+		r.specialFlourGrams //= 2
+		r.whiteFlourGrams //= 2
+		r.breadFlourPercent /= 2
+		r.specialFlourPercent /= 2
+		r.whiteFlourPercent /= 2
+		r.waterGrams //= 2
+		r.waterPercent /= 2
+	'''
 
 	template = Template(templateString)
 	htmlString = template.render(r = r)
@@ -295,12 +318,12 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 
 '''
 TODO
-- cocoa powder
-- preferment (poolish value change)
 - unit conversions?
 - mechanism to delete old stuff
 
 TESTS 
+- preferment (poolish value change)
+- cocoa powder
 - tablespoon conversions
 - bot integration
 

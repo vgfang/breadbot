@@ -14,8 +14,8 @@
 		{% if r.isBicolorRoll %}
 		<li>Bicolor Roll</li>
 		{% endif %}
-		<li>Flour Style: {{r.flourStyle}}</li>
-		<li>Preferment: {{r.preferment}}</li>
+		<li>Bread Shape: {{r.breadShape}}</li>
+		<li>Total Liquids: {{r.totalLiquidGrams}}g - {{r.totalLiquidPercent}}%</li>
 	</ul>
 
 	<h4>Flour</h4>
@@ -27,7 +27,30 @@
 		{% if r.specialFlourPercent != 0 %}
 		<li>{{r.specialFlour}} - {{r.specialFlourGrams}}g - {{r.specialFlourPercent}}%</li>
 		{% endif %}
+		{% if r.cocoaPowderPercent != 0  %}
+		<li>Cocoa Powder - {{r.cocoaPowderGrams}}g - {{r.cocoaPowderPercent}}%</li>
+		{% endif %}
 	</ul>
+
+	{% if r.preferment != 'None' %}
+	<h4>Preferment - {{r.preferment}}</h4>
+		<ul>
+		{% if r.preferment == 'Poolish' %}
+			<li>Bread Flour - {{r.breadFlourGrams//2}}g - {{r.breadFlourPercent//2}}%</li>
+			{% if r.whiteFlourPercent != 0 %}
+			<li>White Flour - {{r.whiteFlourGrams//2}}g - {{r.whiteFlourPercent//2}}%</li>
+			{% endif %}
+			{% if r.specialFlourPercent != 0 %}
+			<li>{{r.specialFlour}} - {{r.specialFlourGrams//2}}g - {{r.specialFlourPercent//2}}%</li>
+			{% endif %}
+			{% if r.waterGrams > 0 %}
+			<li>Water - {{r.waterGrams//2}}g - {{r.waterPercent//2}}%</li>
+			{% endif %}
+		{% endif %}
+		</ul>
+	{% endif %}
+
+
 
 	<h4>Basic Ingredients</h4>
 	<ul>
@@ -48,8 +71,10 @@
 	{% endfor %}
 	{% for extract in r.extracts %}
 		<li>{{extract}} - {{r.extractsAmt[loop.index-1]}}</li>
-	{% endfor %}	
+	{% endfor %}
+	{% if r.tea != "" %}	
 		<li>{{r.tea}} - {{r.teaAmt}}</li>
+	{% endif %}
 	</ul>
 
 	<h4>Enrichments</h4>
