@@ -33,7 +33,7 @@ def generate_name(wordNum:int) -> str:
 	file = open("./words.txt", 'r')
 	allWords = file.read().split('\n')
 	selectedWords = random.sample(allWords, wordNum)
-	return f'{selectedWords[0]} {selectedWords[1]} Bread'
+	return f'{selectedWords[0]} {selectedWords[1]} bread'
 
 # returns true if valid flour amount
 def valid_flour_amount(flourAmt: str) -> int:
