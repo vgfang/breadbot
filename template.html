@@ -13,9 +13,10 @@
 		}
 		* {
 			font-family: Georgia, serif;
-			font-size: 16px;
+			font-size: 18px;
 		}
 		ul{
+			margin-top: 9px;
 			list-style-type: square;
 		}
 		h2{
@@ -25,9 +26,11 @@
 		h3{
 			font-family: 'Brush Script MT', cursive;
 			font-size: 18px;
+			margin-bottom: 18px;
 		}
 		h4{
 			font-size: 18px;
+			margin-bottom: 0px;
 		}
 
 			
@@ -119,9 +122,7 @@
 		{% endif %}
 		<li>{{r.liquid}} - {{r.liquidGrams}}g - {{r.liquidPercent}}%</li>
 		{% for fruitPuree in r.fruitPurees %}
-		<li>{{fruitPuree}} Puree - {{r.fruitPureesGrams[loop.index-1]}}g - {{r.fruitPureesPercent[loop.index-1]}}%</li>		
-		{% endfor %}
+		<li>{{fruitPuree}} Puree - {{r.fruitPureesGrams[loop.index-1]}}g - {{r.fruitPureesPercent[loop.index-1]}}%</li>{% endfor %}
 	</ul>
-		
 	</div>
 </body>
