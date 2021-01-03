@@ -1,10 +1,40 @@
 <head>
 	<title>{{r.breadname}} ({{r.totalFlourGrams}}g)</title>
 	<style>
-		
+		body{
+			background-color: black;
+		}
+		#container{
+			width: 600px;
+			margin: auto;
+			padding: 12px 24px 36px 36px;
+			border-radius: 6px;
+			background-color: E0D3AF;
+		}
+		* {
+			font-family: Georgia, serif;
+			font-size: 16px;
+		}
+		ul{
+			list-style-type: square;
+		}
+		h2{
+			font-family: 'Brush Script MT', cursive;
+			font-size: 30px;
+		}
+		h3{
+			font-family: 'Brush Script MT', cursive;
+			font-size: 18px;
+		}
+		h4{
+			font-size: 18px;
+		}
+
+			
 	</style>
 </head>
 <body>
+	<div id="container">
 	<h2>{{r.breadname}} ({{r.totalFlourGrams}}g)</h2>
 	<h3>[{{r.datetime}}]</h3>
 	<hr>
@@ -93,5 +123,5 @@
 		{% endfor %}
 	</ul>
 		
-	<hr>
+	</div>
 </body>
