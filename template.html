@@ -33,8 +33,10 @@
 			font-size: 18px;
 			margin-bottom: 0px;
 		}
-
-			
+		hr{
+			border: 0px solid black;
+			border-top: 2px solid black;
+		}	
 	</style>
 </head>
 <body>
@@ -98,7 +100,6 @@
 	<h4>Spices/Flavoring</h4>
 	<ul>
 	{% if r.spices == [] %}
-		<li>None</li>
 	{% endif %}
 	{% for spice in r.spices %}
 		<li>{{spice}} - {{r.spicesAmt[loop.index-1]}}</li>
