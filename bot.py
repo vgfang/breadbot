@@ -18,7 +18,6 @@ intents.members = True
 bot = commands.Bot(command_prefix='!')
 
 recipePath = './recipes/'
-randomWordsNum = 2
 
 @bot.event
 async def on_ready():
@@ -28,12 +27,39 @@ async def on_ready():
 			f'{guild.name}(id: {guild.id})'
 		)
 
-# generate random permuation of word_num separated by " "
-def generate_name(wordNum:int) -> str:
+# checks if word in wordlist is valid for use
+def invalid_word(word: str) -> bool:
+	if word.isspace():
+		return False
+	if word == "":
+		return False
+	return True
+
+# generate random name using word list in form "adjectve noun bread"
+def generate_name() -> str:
+	adjBreak = '> ADJECTIVES\\start\\below'
+	nounBreak = '> NOUNS\\start\\below'
+
 	file = open("./words.txt", 'r')
-	allWords = file.read().split('\n')
-	selectedWords = random.sample(allWords, wordNum)
-	return f'{selectedWords[0]} {selectedWords[1]} bread'
+	text = file.read()
+	textSplit = text.split(nounBreak + "\n")
+	if len(textSplit) != 2:
+		return f"Fix Improper WordList. Missing '{nounBreak}'."
+
+	adjectives = textSplit[0].split('\n')
+	if adjectives[0] != adjBreak:
+		return f"Fix Improper WordList. Missing '{adjBreak}'."
+	adjectives.remove(adjBreak)
+	nouns = textSplit[1].split('\n')
+	adjectives = list(filter(invalid_word, adjectives))
+	nouns = list(filter(invalid_word, nouns))
+	if len(nouns) == 0 or len(adjectives) == 0:
+		return "Fix Improper WordList. Need at least one noun and adjective."
+
+	adjective = random.choice(adjectives)
+	noun = random.choice(nouns)
+
+	return f'{adjective} {noun} bread'
 
 # returns true if valid flour amount
 def valid_flour_amount(flourAmt: str) -> int:
@@ -48,7 +74,7 @@ async def bread(ctx, flourGrams=500):
 	if not valid_flour_amount(flourGrams):
 		ctx.send("Improper flour grams input.")
 
-	breadname = generate_name(randomWordsNum)
+	breadname = generate_name()
 	filename = f"{recipePath}{breadname}-{flourGrams}g"
 
 	recipeHtml = breadbot.generate_recipe(breadname, filename+".html", flourGrams)
@@ -56,7 +82,7 @@ async def bread(ctx, flourGrams=500):
 	imgkit.from_string(recipeHtml, filename+".png", options=options)
 	await ctx.send(file=discord.File(filename+".png"))
 	await ctx.send(file=discord.File(filename+".html"))
-	os.remove(filename+".png")
 	os.remove(filename+".html")
+	os.remove(filename+".png")
 
 bot.run(TOKEN)
