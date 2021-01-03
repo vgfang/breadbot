@@ -294,19 +294,6 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	r.fruitPureesGrams = list(map(lambda x: to_g(r.totalFlourGrams,x), r.fruitPureesPercent))
 	r.cocoaPowderGrams = round(r.cocoaPowderPercent/100 * r.totalFlourGrams)
 
-	'''
-	## Preferment Changes
-	if r.preferment == 'Poolish':
-		r.breadFlourGrams //= 2
-		r.specialFlourGrams //= 2
-		r.whiteFlourGrams //= 2
-		r.breadFlourPercent /= 2
-		r.specialFlourPercent /= 2
-		r.whiteFlourPercent /= 2
-		r.waterGrams //= 2
-		r.waterPercent /= 2
-	'''
-
 	template = Template(templateString)
 	htmlString = template.render(r = r)
 	outfile = open(f'{filename}', 'w')
@@ -315,21 +302,3 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	templateFile.close()
 
 	return "Success"
-
-'''
-TODO
-- unit conversions?
-- mechanism to delete old stuff
-
-TESTS 
-- preferment (poolish value change)
-- cocoa powder
-- tablespoon conversions
-- bot integration
-
-DONE
-- writing to file
-- cow milk
-- liquid, cream cheese, fruit puree
-- zest/extract check
-'''
