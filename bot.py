@@ -1,11 +1,8 @@
 # bot.py
 import os
-import discord
 import random
-import uuid
-import bread
-from datetime import datetime
-from jinja2 import Template
+import discord
+import bread as breadbot
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -39,21 +36,24 @@ def generate_name(wordNum:int) -> str:
 
 # returns true if valid flour amount
 def valid_flour_amount(flourAmt: str) -> int:
-	if flourAmt == None:
+	if flourAmt is None:
 		return False
-	elif not str(flourAmt).isnumeric():
+	if not str(flourAmt).isnumeric():
 		return False
 	return True
 
-@bot.command(name='sandwich', help='Responds with bread recipe with randomized parameters and optional flour grams.')
-async def sandwich(ctx, flourGrams=500):
+@bot.command(name='bread', help='Responds with bread recipe with randomized parameters and optional flour grams.')
+async def bread(ctx, flourGrams=500):
+	if not valid_flour_amount(flourGrams):
+		ctx.send("Improper flour grams input.")
+
 	breadname = generate_name(randomWordsNum)
 	filename = f"{recipePath}{breadname}-{flourGrams}g.html"
 
-	msg = bread.generate_recipe(breadname, filename, flourGrams)
+	msg = breadbot.generate_recipe(breadname, filename, flourGrams)
 	if msg != "Success":
 		await ctx.send("Error. Contact Bot maintainer.")
 	await ctx.send(file=discord.File(filename))
-	os.remove(filename)	
+	os.remove(filename)
 
 bot.run(TOKEN)
