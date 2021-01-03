@@ -3,7 +3,6 @@ import os
 import random
 import discord
 import imgkit
-import asyncio
 import bread as breadbot
 from dotenv import load_dotenv
 from discord.ext import commands
