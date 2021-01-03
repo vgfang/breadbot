@@ -2,6 +2,8 @@
 import os
 import random
 import discord
+import imgkit
+import asyncio
 import bread as breadbot
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -48,12 +50,14 @@ async def bread(ctx, flourGrams=500):
 		ctx.send("Improper flour grams input.")
 
 	breadname = generate_name(randomWordsNum)
-	filename = f"{recipePath}{breadname}-{flourGrams}g.html"
+	filename = f"{recipePath}{breadname}-{flourGrams}g"
 
-	msg = breadbot.generate_recipe(breadname, filename, flourGrams)
-	if msg != "Success":
-		await ctx.send("Error. Contact Bot maintainer.")
-	await ctx.send(file=discord.File(filename))
-	os.remove(filename)
+	recipeHtml = breadbot.generate_recipe(breadname, filename+".html", flourGrams)
+	options = {'width': 700, 'disable-smart-width': ''}
+	imgkit.from_string(recipeHtml, filename+".png", options=options)
+	await ctx.send(file=discord.File(filename+".png"))
+	await ctx.send(file=discord.File(filename+".html"))
+	os.remove(filename+".png")
+	os.remove(filename+".html")
 
 bot.run(TOKEN)

@@ -301,4 +301,4 @@ def generate_recipe(breadname: str, filename: str, flourGramInput: int) -> str:
 	outfile.close()
 	templateFile.close()
 
-	return "Success"
+	return htmlString
