@@ -1,6 +1,8 @@
 # breadBot
 breadBot is a Discord bot which generates bread recipes using randomisation of the types and distrbution of parameters such as flour, spices, enrichments and upload an HTML recipe and PNG preview upon being called. The compatibility of the combinations have been considered and the bot will only produce recipes that are sensible.
 
+![Alt text](readme_images/main.png?raw=true "Title")
+
 ## How to Use
 - __Generating Recipes__: Once deployed, the bot can be called in a text channel using `!bread` and the bot will create and upload a recipe with total flour grams of 500g for the user to download.
 - __Specifying Total Flour Amount__: The bot can be called using `!bread x`, where `x` will specify the total flour amount in grams for the recipe.
