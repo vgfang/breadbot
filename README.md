@@ -1,5 +1,5 @@
 # breadBot
-breadBot is a Discord bot which generates bread recipes using randomisation of the types and distrbution of parameters such as flour, spices, enrichments and upload an HTML recipe and PNG preview upon being called. The compatibility of the combinations have been considered and the bot will only produce recipes that are sensible.
+breadBot is a Discord bot which generates bread recipes using randomisation of the types and distrbution of parameters such as flour, spices, enrichments and upload an HTML recipe and PNG preview upon being called. The compatibility of the combinations have been considered and the bot will only produce recipes that are sensible. Calcuations for grams are based on total flour grams and the recipe displays baker percentages.
 
 ![Alt text](readme_images/main.png?raw=true "Title")
 
@@ -17,7 +17,7 @@ sampleNoun
 
 ## Deployment on GNU/Linux
 1. `git clone` the repository
-2. Install `wkhtmltopdf` on distribution
+2. Install `wkhtmltopdf` on your distribution. eg. `sudo apt install wkhtmltopdf`
 3. Create a Discord bot at the Discord Developer Portal and add the bot to your desired server
 4. Use your Discord Bot Token and Discord Guild Token to fill in the `.env` variables
 5. Activate the virtualenv: `source env/bin/activate`
