@@ -18,16 +18,16 @@ sampleNoun
 ## Deployment on GNU/Linux
 1. `git clone` the repository
 2. Install `wkhtmltopdf` on your distribution for image previews. eg. `sudo apt install wkhtmltopdf`
-2. Install `tmux` on your distribution for running the bot 24/7. eg. `sudo apt install tmux`
-3. Create a Discord bot at the Discord Developer Portal and add the bot to your desired server
-4. Use your Discord Bot Token to fill in the `.env` variable
-5. Activate the virtualenv: `source env/bin/activate`
-6. Run the bot using `tmux` so that it does not terminate on logout: 
+3. Install `tmux` on your distribution for running the bot 24/7. eg. `sudo apt install tmux`
+4. Create a Discord bot at the Discord Developer Portal and add the bot to your desired server
+5. Use your Discord Bot Token to fill in the `.env` variable
+6. Activate the virtualenv: `source env/bin/activate`
+7. Run the bot using `tmux` so that it does not terminate on logout: 
    - `tmux`
    - `source env/bin/activate`
    - `python3 bot.py`
    - `Ctrl+b`, `d`
-7. To shut down the bot:
+8. To shut down the bot:
    - `tmux`
    - `Ctrl+b`, `s`
    - select tmux session with the running bot
