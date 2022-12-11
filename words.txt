@@ -2,4 +2,4 @@
 sampleAdjective
 
 > NOUNS\start\below
-sampleNounTestingGithub
+sampleNoun
